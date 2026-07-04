@@ -11,8 +11,8 @@ This document outlines the detailed execution steps and progress checklists for 
 - **Phase 3: Core Search & URL Sync Hook** — `[x]` Completed
 - **Phase 4: Base Layout & UI Shell** — `[x]` Completed
 - **Phase 5: Search Results & Keyboard Controls** — `[x]` Completed
-- **Phase 6: Premium Article Modal** — `[ ]` Not Started
-- **Phase 7: Visual Polish & Verification** — `[ ]` Not Started
+- **Phase 6: Premium Article Modal** — `[x]` Completed
+- **Phase 7: Visual Polish & Verification** — `[x]` Completed
 
 ---
 
@@ -113,12 +113,12 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Create a high-readability modal overlay to preview articles without losing navigation context.
 
 ### Tasks
-- [ ] Build `components/ArticleModal.tsx`.
-- [ ] Implement scroll lock on the underlying body element when the modal is active.
-- [ ] Build standard article layout: large title, author metadata, read-time, date, categories, and spaced out typographic styling for paragraphs.
-- [ ] Trap keyboard focus inside the modal for accessibility.
-- [ ] Sync modal open state to URL slug parameter `?article=slug`.
-- [ ] Add closing actions: close button click, escape key, and background overlay click.
+- [x] Build `components/ArticleModal.tsx`.
+- [x] Implement scroll lock on the underlying body element when the modal is active.
+- [x] Build standard article layout: large title, author metadata, read-time, date, categories, and spaced out typographic styling for paragraphs.
+- [x] Trap keyboard focus inside the modal for accessibility.
+- [x] Sync modal open state to URL slug parameter `?article=slug`.
+- [x] Add closing actions: close button click, escape key, and background overlay click.
 
 ---
 
@@ -126,7 +126,7 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Implement final responsive design checks, empty states, and compile verification.
 
 ### Tasks
-- [ ] Design the Empty State view shown when no results match: display a friendly message and 3–4 interactive search recommendations.
-- [ ] Verify responsiveness: ensure horizontal scrolling chips on mobile, correct padding scales, and full-screen modal behavior.
-- [ ] Perform a full accessibility run: check contrast ratios, keyboard-only navigation flow, and screen reader labels.
-- [ ] Run `npm run build` to confirm zero compilation errors.
+- [x] Design the Empty State view shown when no results match: display a friendly message and 3–4 interactive search recommendations.
+- [x] Verify responsiveness: ensure horizontal scrolling chips on mobile, correct padding scales, and full-screen modal behavior.
+- [x] Perform a full accessibility run: check contrast ratios, keyboard-only navigation flow, and screen reader labels.
+- [x] Run `npm run build` to confirm zero compilation errors.

@@ -10,6 +10,7 @@ interface ResultCardProps {
   searchQuery: string;
   isKeyboardFocused: boolean;
   onClick: () => void;
+  onFocus?: () => void;
 }
 
 export default function ResultCard({
@@ -17,6 +18,7 @@ export default function ResultCard({
   searchQuery,
   isKeyboardFocused,
   onClick,
+  onFocus,
 }: ResultCardProps) {
   // Determine whether to display the description or a dynamic body snippet
   const snippet = searchQuery ? getSnippet(article.content, searchQuery) : '';
@@ -66,6 +68,7 @@ export default function ResultCard({
     <article
       className={cardClass}
       onClick={onClick}
+      onFocus={onFocus}
       tabIndex={0}
       role="button"
       aria-pressed={isKeyboardFocused}

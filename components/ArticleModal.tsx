@@ -11,30 +11,66 @@ interface ArticleModalProps {
 
 export default function ArticleModal({ article, onClose }: ArticleModalProps) {
   const modalRef = useRef<HTMLDivElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Lock body scroll when modal is active
+  // Lock body scroll and prevent layout shift when modal is active
   useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+    
+    // Calculate scrollbar width
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
     document.body.style.overflow = 'hidden';
+
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
     };
   }, []);
 
-  // Trap focus inside the modal for accessibility
+  // Trap keyboard focus and restore focus on unmount
   useEffect(() => {
+    // Store previously focused element
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
     if (!modalRef.current) return;
     
-    const focusableElements = modalRef.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    const getFocusableElements = () => {
+      if (!modalRef.current) return [];
+      return Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => {
+        const style = window.getComputedStyle(el);
+        return (
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          !(el as HTMLButtonElement).disabled
+        );
+      });
+    };
 
-    // Focus close button initially
-    firstElement?.focus();
+    const focusable = getFocusableElements();
+    if (focusable.length > 0) {
+      // Focus the close button initially
+      focusable[0].focus();
+    }
 
     const handleTabKey = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
+
+      const currentFocusable = getFocusableElements();
+      if (currentFocusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      const firstElement = currentFocusable[0];
+      const lastElement = currentFocusable[currentFocusable.length - 1];
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -50,12 +86,15 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
     };
 
     window.addEventListener('keydown', handleTabKey);
+    
     return () => {
       window.removeEventListener('keydown', handleTabKey);
+      // Restore focus to previous element when modal closes
+      previousFocusRef.current?.focus();
     };
   }, []);
 
-  // Handle ESC key press globally (or let the parent handle it)
+  // Handle ESC key press globally
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -79,11 +118,14 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="modal-overlay" onClick={onClose} role="presentation">
       <div 
         ref={modalRef}
         className="modal-container" 
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title-id"
       >
         {/* Modal Header */}
         <div className="modal-header">
@@ -102,20 +144,20 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
 
         {/* Modal Scrollable Body */}
         <div className="modal-body">
-          <h1 className="modal-title">{article.title}</h1>
+          <h1 id="modal-title-id" className="modal-title">{article.title}</h1>
           
           {/* Metadata Block */}
           <div className="modal-article-meta">
             <div className="modal-meta-item">
-              <User size={14} className="text-[var(--text-muted)]" />
+              <User size={14} color="var(--text-muted)" />
               <span>{article.author}</span>
             </div>
             <div className="modal-meta-item">
-              <Calendar size={14} className="text-[var(--text-muted)]" />
+              <Calendar size={14} color="var(--text-muted)" />
               <span>{formatDate(article.date)}</span>
             </div>
             <div className="modal-meta-item">
-              <Clock size={14} className="text-[var(--text-muted)]" />
+              <Clock size={14} color="var(--text-muted)" />
               <span>{article.readTime}</span>
             </div>
           </div>

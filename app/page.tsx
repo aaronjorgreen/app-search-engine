@@ -8,8 +8,11 @@ import FilterSection from '../components/FilterSection';
 import ResultsSummary from '../components/ResultsSummary';
 import ResultCard from '../components/ResultCard';
 import ArticleModal from '../components/ArticleModal';
-import { useArticleSearch } from '../hooks/useArticleSearch';
+import { useArticleSearch, Article } from '../hooks/useArticleSearch';
 import { Search } from 'lucide-react';
+import articlesData from '../public/mock-articles.json';
+
+const articles = articlesData as Article[];
 
 function SearchPageContent() {
   const router = useRouter();
@@ -34,8 +37,8 @@ function SearchPageContent() {
 
   // Check if article modal should be open (synced with ?article=slug URL param)
   const activeArticleSlug = searchParams.get('article');
-  // Find article from full results list so a user can open it even if they filter afterwards
-  const activeArticle = results.find((a) => a.slug === activeArticleSlug) || null;
+  // Find article from full articles list so a user can open it even if they filter afterwards
+  const activeArticle = articles.find((a) => a.slug === activeArticleSlug) || null;
 
   // Reset keyboard card focus when search results change
   useEffect(() => {
@@ -122,7 +125,7 @@ function SearchPageContent() {
     };
   }, [results, focusedIndex, activeArticleSlug, query, setQuery]);
 
-  // Scroll active list card into view when navigated via arrow keys
+  // Scroll active list card into view and shift keyboard focus when navigated via arrow keys
   useEffect(() => {
     if (focusedIndex === -1) return;
     const cards = document.querySelectorAll('.result-card');
@@ -132,6 +135,9 @@ function SearchPageContent() {
         behavior: 'smooth',
         block: 'nearest',
       });
+      if (document.activeElement !== selectedCardElement) {
+        selectedCardElement.focus();
+      }
     }
   }, [focusedIndex]);
 
@@ -169,28 +175,42 @@ function SearchPageContent() {
                   searchQuery={debouncedQuery}
                   isKeyboardFocused={idx === focusedIndex}
                   onClick={() => handleOpenArticle(article.slug)}
+                  onFocus={() => setFocusedIndex(idx)}
                 />
               ))}
             </div>
           ) : (
             <div className="empty-state">
-              <Search className="empty-icon" />
+              <Search className="empty-icon" color="var(--text-muted)" />
               <h3 className="empty-title">No matching articles found</h3>
               <p className="empty-text">
-                Try searching for another topic or click one of our recommended keywords below.
+                We couldn't find any articles matching your search query or filters. Try adjusting your query, selecting different tags, or resetting.
               </p>
-              <div className="empty-suggestions">
-                {['AI agents', 'SaaS', 'funding', 'automation'].map((term) => (
-                  <button
-                    key={term}
-                    className="tag-pill"
-                    onClick={() => setQuery(term)}
-                    type="button"
-                  >
-                    {term}
-                  </button>
-                ))}
+              
+              <div style={{ marginTop: 'var(--space-2)' }}>
+                <h4 className="tags-section-title" style={{ display: 'block', marginBottom: 'var(--space-2)' }}>Suggested Searches</h4>
+                <div className="empty-suggestions">
+                  {['AI agents', 'SaaS', 'funding', 'automation', 'operations'].map((term) => (
+                    <button
+                      key={term}
+                      className="tag-pill"
+                      onClick={() => setQuery(term)}
+                      type="button"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              <button
+                className="category-chip active"
+                style={{ marginTop: 'var(--space-4)' }}
+                onClick={clearAllFilters}
+                type="button"
+              >
+                Reset search & filters
+              </button>
             </div>
           )}
         </div>

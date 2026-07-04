@@ -6,7 +6,7 @@
   --border-soft: #EBEEF3;
   --text-primary: #111827;
   --text-secondary: #4B5563;
-  --text-muted: #7C8794;
+  --text-muted: #5B6776;
   --accent: #2563EB;
   --accent-soft: #DBEAFE;
   --success-soft: #ECFDF5;
@@ -349,12 +349,20 @@ mark {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+.category-chip:active {
+  transform: scale(0.96);
+}
+
 .category-chip.active {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--surface);
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.category-chip.active:active {
+  transform: scale(0.96);
 }
 
 .tags-section-title {
@@ -391,8 +399,14 @@ mark {
 
 .tag-pill:hover {
   background: rgba(255, 255, 255, 0.75);
-  border-color: rgba(37, 99, 235, 0.2);
+  border-color: rgba(37, 99, 235, 0.25);
   color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+}
+
+.tag-pill:active {
+  transform: scale(0.96);
 }
 
 .tag-pill.active {
@@ -400,6 +414,18 @@ mark {
   border-color: var(--accent);
   color: var(--accent);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.tag-pill.active:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.12);
+}
+
+.tag-pill.active:active {
+  transform: scale(0.96);
 }
 
 /* Results Area */
@@ -603,14 +629,15 @@ mark {
 }
 
 /* Modal Styling */
+/* Modal Styling */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(17, 24, 39, 0.4);
-  backdrop-filter: blur(4px);
+  background-color: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -654,7 +681,8 @@ mark {
   border: none;
   cursor: pointer;
   color: var(--text-muted);
-  padding: 6px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -670,13 +698,13 @@ mark {
 .modal-body {
   padding: var(--space-8) var(--space-8);
   overflow-y: auto;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .modal-title {
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.25;
   color: var(--text-primary);
   margin-bottom: var(--space-4);
   letter-spacing: -0.02em;
@@ -700,15 +728,15 @@ mark {
 }
 
 .modal-content {
-  font-size: 1rem;
+  font-size: 1.0625rem;
   color: var(--text-secondary);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
 }
 
 .modal-content p {
-  margin-bottom: var(--space-4);
+  margin: 0;
 }
 
 .modal-tags {
@@ -718,6 +746,27 @@ mark {
   margin-top: var(--space-6);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-soft);
+}
+
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: 0;
+  }
+  .modal-container {
+    max-height: 100vh;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+  .modal-body {
+    padding: var(--space-6) var(--space-4) var(--space-12);
+  }
+  .modal-header {
+    padding: var(--space-3) var(--space-4);
+  }
+  .modal-title {
+    font-size: 1.75rem;
+  }
 }
 
 @keyframes fadeIn {

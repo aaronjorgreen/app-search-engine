@@ -42,7 +42,7 @@ export default function ResultsSummary({
   return (
     <div className="results-summary-bar">
       <div className="results-count">
-        {hasFilters ? <Filter size={14} className="text-[var(--accent)]" /> : <Layers size={14} className="text-[var(--text-muted)]" />}
+        {hasFilters ? <Filter size={14} color="var(--accent)" /> : <Layers size={14} color="var(--text-muted)" />}
         <span>{getSummaryText()}</span>
       </div>
       {hasFilters && (
