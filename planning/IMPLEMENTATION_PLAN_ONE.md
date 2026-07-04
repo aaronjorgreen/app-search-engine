@@ -7,10 +7,10 @@ This document outlines the detailed execution steps and progress checklists for 
 ## Progress Summary
 
 - **Phase 1: Mock Content Generation** — `[x]` Completed
-- **Phase 2: Project Setup & Next.js Init** — `[ ]` Not Started
-- **Phase 3: Core Search & URL Sync Hook** — `[ ]` Not Started
-- **Phase 4: Base Layout & UI Shell** — `[ ]` Not Started
-- **Phase 5: Search Results & Keyboard Controls** — `[ ]` Not Started
+- **Phase 2: Project Setup & Next.js Init** — `[x]` Completed
+- **Phase 3: Core Search & URL Sync Hook** — `[x]` Completed
+- **Phase 4: Base Layout & UI Shell** — `[x]` Completed
+- **Phase 5: Search Results & Keyboard Controls** — `[x]` Completed
 - **Phase 6: Premium Article Modal** — `[ ]` Not Started
 - **Phase 7: Visual Polish & Verification** — `[ ]` Not Started
 
@@ -49,12 +49,12 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Initialize the Next.js repository with TypeScript, global CSS design systems, and key search dependencies.
 
 ### Tasks
-- [ ] Run `npx create-next-app@latest --help` to identify flags for non-interactive setup.
-- [ ] Initialize the Next.js application in the root directory (excluding Tailwind CSS, using App Router, TypeScript, and ESLint).
-- [ ] Install `minisearch` as a dependency.
-- [ ] Relocate the generated `mock-articles.json` into the `public/` directory (or configure a local import module) so it's accessible client-side.
-- [ ] Configure `app/globals.css` with the visual design system tokens (CSS properties like `--background: #F7F8FA`, `--surface: #FFFFFF`, `--accent: #2563EB`, and standard spacing tokens).
-- [ ] Confirm baseline Next.js development server runs using `npm run dev`.
+- [x] Run `npx create-next-app@latest --help` to identify flags for non-interactive setup.
+- [x] Initialize the Next.js application in the root directory (excluding Tailwind CSS, using App Router, TypeScript, and ESLint).
+- [x] Install `minisearch` as a dependency.
+- [x] Relocate the generated `mock-articles.json` into the `public/` directory (or configure a local import module) so it's accessible client-side.
+- [x] Configure `app/globals.css` with the visual design system tokens (CSS properties like `--background: #F7F8FA`, `--surface: #FFFFFF`, `--accent: #2563EB`, and standard spacing tokens).
+- [x] Confirm baseline Next.js development server runs using `npm run dev`.
 
 ---
 
@@ -62,15 +62,15 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Create the client-side search engine and query-state synchronizer using MiniSearch and Next.js routers.
 
 ### Tasks
-- [ ] Create a utility hook `hooks/useArticleSearch.ts` that loads the 100 mock articles.
-- [ ] Initialize MiniSearch:
+- [x] Create a utility hook `hooks/useArticleSearch.ts` that loads the 100 mock articles.
+- [x] Initialize MiniSearch:
   - Search fields: `title`, `tags`, `description`, `category`, `content`.
   - Boost factors: Title (3.0), Tags (2.0), Description (1.5).
   - Search options: Prefix match enabled, fuzzy matching tolerance configured.
-- [ ] Implement a highlight utility function that wraps matching terms inside `<mark>` tags based on MiniSearch match metadata.
-- [ ] Implement a dynamic snippet extractor: if the search match lies within the content body, extract a ~150-character window around the first match and highlight it.
-- [ ] Sync search inputs (`q`), category filters (`category`), and selected tags (`tags`) with the URL address bar via Next.js `useSearchParams` and `useRouter`.
-- [ ] Add a 150ms debounce to prevent indexing lag on rapid typing.
+- [x] Implement a highlight utility function that wraps matching terms inside `<mark>` tags based on MiniSearch match metadata.
+- [x] Implement a dynamic snippet extractor: if the search match lies within the content body, extract a ~150-character window around the first match and highlight it.
+- [x] Sync search inputs (`q`), category filters (`category`), and selected tags (`tags`) with the URL address bar via Next.js `useSearchParams` and `useRouter`.
+- [x] Add a 150ms debounce to prevent indexing lag on rapid typing.
 
 ---
 
@@ -78,15 +78,15 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Build the outer shell layout conforming to the calm, research-style Visual Direction.
 
 ### Tasks
-- [ ] Build the layout wrapper with `app/layout.tsx`.
-- [ ] Create the `components/Header.tsx` showing the "Signal Ledger" logo, "Tech Intelligence Archive" label, and total article count ("100 mock articles").
-- [ ] Create the `components/SearchHero.tsx` containing the hero text and the primary search bar.
-- [ ] Build the styling for the large Search Input:
+- [x] Build the layout wrapper with `app/layout.tsx`.
+- [x] Create the `components/Header.tsx` showing the "Signal Ledger" logo, "Tech Intelligence Archive" label, and total article count ("100 mock articles").
+- [x] Create the `components/SearchHero.tsx` containing the hero text and the primary search bar.
+- [x] Build the styling for the large Search Input:
   - High focus contrast.
   - Large rounded border.
   - Interactive "Clear" (X) button when query has content.
   - Keyboard hint badge (`[/]` to focus).
-- [ ] Design the horizontal category filter chips and popular tags selector.
+- [x] Design the horizontal category filter chips and popular tags selector.
 
 ---
 
@@ -94,18 +94,18 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Implement the instant results area with match highlights and full keyboard usability.
 
 ### Tasks
-- [ ] Create the list-style `components/ResultCard.tsx` following the exact hierarchy:
+- [x] Create the list-style `components/ResultCard.tsx` following the exact hierarchy:
   1. Category/date metadata line.
   2. Title (with highlighted matches).
   3. Description or dynamic content snippet (with highlighted matches).
   4. Tags list and read time.
-- [ ] Render the Results Summary Bar displaying query results counts (e.g. `24 results for "AI agents"` or `100 articles available`) with a visible "Clear filters" link.
-- [ ] Build keyboard navigation inside `components/SearchInput.tsx` and the results wrapper:
+- [x] Render the Results Summary Bar displaying query results counts (e.g. `24 results for "AI agents"` or `100 articles available`) with a visible "Clear filters" link.
+- [x] Build keyboard navigation inside `components/SearchInput.tsx` and the results wrapper:
   - Press `/` to focus the search bar.
   - Press `ArrowDown` / `ArrowUp` to change selection focus among result cards.
   - Press `Enter` to open the currently selected card.
   - Press `Esc` to clear search or close the modal.
-- [ ] Render clear focused outline styles on active cards.
+- [x] Render clear focused outline styles on active cards.
 
 ---
 
