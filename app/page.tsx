@@ -11,6 +11,7 @@ import ArticleModal from '../components/ArticleModal';
 import { useArticleSearch, Article } from '../hooks/useArticleSearch';
 import { Search } from 'lucide-react';
 import articlesData from '../public/mock-articles.json';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const articles = articlesData as Article[];
 
@@ -25,6 +26,9 @@ function SearchPageContent() {
     setSelectedCategory,
     selectedTags,
     toggleTag,
+    searchMode,
+    setSearchMode,
+    isLoading,
     results,
     clearAllFilters,
     allCategories,
@@ -146,7 +150,13 @@ function SearchPageContent() {
       <Header totalArticlesCount={totalArticlesCount} />
       
       <main className="container" style={{ flex: 1, paddingBottom: 'var(--space-16)' }}>
-        <SearchHero value={query} onChange={setQuery} inputRef={searchInputRef} />
+        <SearchHero 
+          value={query} 
+          onChange={setQuery} 
+          inputRef={searchInputRef} 
+          searchMode={searchMode}
+          onSearchModeChange={setSearchMode}
+        />
         
         <FilterSection
           categories={allCategories}
@@ -166,7 +176,9 @@ function SearchPageContent() {
             onClear={clearAllFilters}
           />
 
-          {results.length > 0 ? (
+          {isLoading ? (
+            <SkeletonLoader count={3} />
+          ) : results.length > 0 ? (
             <div className="results-list">
               {results.map((article, idx) => (
                 <ResultCard

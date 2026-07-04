@@ -64,6 +64,12 @@ export default function ResultCard({
 
   const cardClass = `result-card cat-${categorySlug} ${isKeyboardFocused ? 'keyboard-focused' : ''}`;
 
+  const getScoreClass = (score: number) => {
+    if (score >= 0.7) return 'score-badge high';
+    if (score >= 0.4) return 'score-badge medium';
+    return 'score-badge low';
+  };
+
   return (
     <article
       className={cardClass}
@@ -75,6 +81,17 @@ export default function ResultCard({
     >
       {/* Category and Date Metadata */}
       <div className="card-meta">
+        {article.similarityScore !== undefined && (
+          <>
+            <span 
+              className={getScoreClass(article.similarityScore)} 
+              title={`This article conceptually matches your query by ${Math.round(article.similarityScore * 100)}%`}
+            >
+              {Math.round(article.similarityScore * 100)}% Match
+            </span>
+            <span className="card-dot">•</span>
+          </>
+        )}
         <span className="card-category" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
           <BookOpen size={12} />
           {article.category}

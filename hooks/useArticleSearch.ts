@@ -16,6 +16,7 @@ export interface Article {
   date: string;
   readTime: string;
   content: string;
+  similarityScore?: number; // Optional similarity match score from semantic search
 }
 
 // Convert JSON import to typed array
@@ -47,22 +48,31 @@ export function useArticleSearch() {
   const qParam = searchParams.get('q') || '';
   const categoryParam = searchParams.get('category') || '';
   const tagsParam = searchParams.get('tags');
+  const modeParam = (searchParams.get('mode') as 'keyword' | 'semantic') || 'keyword';
+
   const selectedTags = useMemo(() => {
     return tagsParam ? tagsParam.split(',').filter((t) => t.length > 0) : [];
   }, [tagsParam]);
 
   // Local state for immediate input value (prevents typing lag)
   const [localQuery, setLocalQuery] = useState(qParam);
+  const [searchMode, setSearchModeState] = useState<'keyword' | 'semantic'>(modeParam);
+  const [isLoading, setIsLoading] = useState(false);
+  const [semanticResults, setSemanticResults] = useState<Article[]>([]);
 
   // Sync local query if URL parameter changes (e.g. back navigation or reset)
   useEffect(() => {
     setLocalQuery(qParam);
   }, [qParam]);
 
+  // Sync searchMode if URL parameter changes
+  useEffect(() => {
+    setSearchModeState(modeParam);
+  }, [modeParam]);
+
   // Debounced URL updates for query param
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      // Parse search params dynamically to avoid stale state issues
       const params = new URLSearchParams(window.location.search);
       if (localQuery) {
         params.set('q', localQuery);
@@ -106,14 +116,89 @@ export function useArticleSearch() {
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [router]);
 
+  // Update search mode instantly in URL
+  const setSearchMode = useCallback((mode: 'keyword' | 'semantic') => {
+    const params = new URLSearchParams(window.location.search);
+    if (mode === 'semantic') {
+      params.set('mode', 'semantic');
+    } else {
+      params.delete('mode');
+    }
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [router]);
+
   // Reset all filters and search input
   const clearAllFilters = useCallback(() => {
     setLocalQuery('');
-    router.replace('?', { scroll: false });
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    
+    // Clear everything except search mode
+    const newParams = new URLSearchParams();
+    if (mode) {
+      newParams.set('mode', mode);
+    }
+    router.replace(newParams.toString() ? `?${newParams.toString()}` : '?', { scroll: false });
   }, [router]);
 
-  // Execute Search & Filtering
+  // Fetch semantic search results asynchronously when in semantic mode
+  useEffect(() => {
+    if (searchMode !== 'semantic') {
+      setSemanticResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    let isCurrent = true;
+    
+    async function fetchSemanticResults() {
+      setIsLoading(true);
+      try {
+        const res = await fetch('/api/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: qParam,
+            category: categoryParam,
+            tags: selectedTags,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch semantic results: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        if (isCurrent) {
+          setSemanticResults(data);
+        }
+      } catch (err) {
+        console.error('Error fetching semantic search:', err);
+        if (isCurrent) {
+          setSemanticResults([]);
+        }
+      } finally {
+        if (isCurrent) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchSemanticResults();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [qParam, categoryParam, selectedTags, searchMode]);
+
+  // Execute Search & Filtering depending on mode
   const results = useMemo(() => {
+    if (searchMode === 'semantic') {
+      return semanticResults;
+    }
+
     let list: Article[] = [];
 
     if (qParam.trim().length > 0) {
@@ -139,7 +224,7 @@ export function useArticleSearch() {
     }
 
     return list;
-  }, [qParam, categoryParam, selectedTags]);
+  }, [searchMode, semanticResults, qParam, categoryParam, selectedTags]);
 
   return {
     query: localQuery,
@@ -149,6 +234,9 @@ export function useArticleSearch() {
     setSelectedCategory: setCategory,
     selectedTags,
     toggleTag,
+    searchMode,
+    setSearchMode,
+    isLoading,
     results,
     clearAllFilters,
     allCategories,

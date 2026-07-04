@@ -6,13 +6,13 @@ This document outlines the detailed execution steps and progress checklists for 
 
 ## Progress Summary
 
-- **Phase 1: Environment & Dependencies** — `[ ]` Planned
-- **Phase 2: Database Migration & Schema Setup** — `[ ]` Planned
-- **Phase 3: Seeding Database with OpenAI Embeddings** — `[ ]` Planned
-- **Phase 4: Next.js Search Route Handler** — `[ ]` Planned
-- **Phase 5: Search Hook Integration (Toggle & State)** — `[ ]` Planned
-- **Phase 6: UI Refinement & Aesthetics** — `[ ]` Planned
-- **Phase 7: Polish & Verification** — `[ ]` Planned
+- **Phase 1: Environment & Dependencies** — `[x]` Completed
+- **Phase 2: Database Migration & Schema Setup** — `[x]` Completed
+- **Phase 3: Seeding Database with OpenAI Embeddings** — `[x]` Completed
+- **Phase 4: Next.js Search Route Handler** — `[x]` Completed
+- **Phase 5: Search Hook Integration (Toggle & State)** — `[x]` Completed
+- **Phase 6: UI Refinement & Aesthetics** — `[x]` Completed
+- **Phase 7: Polish & Verification** — `[x]` Completed
 
 ---
 
@@ -20,16 +20,13 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Setup Supabase and OpenAI client dependencies and secure environment keys.
 
 ### Tasks
-- [ ] Install `@supabase/supabase-js` package.
-- [ ] Install `openai` package.
-- [ ] Install dev dependency `tsx` (if not already present, to run the TypeScript seeding script).
-- [ ] Create/configure `.env.local` containing:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `OPENAI_API_KEY`
-- [ ] Create a local `.env.example` in the workspace to document required variables.
-- [ ] Verify Supabase client initialized correctly in server/client files.
+- [x] Create GitHub Issue #8 for Phase 1.
+- [x] Install `@supabase/supabase-js` package.
+- [x] Install `openai` package.
+- [x] Install dev dependency `tsx` (if not already present, to run the TypeScript seeding script).
+- [x] Create/configure `.env.local` containing credentials.
+- [x] Create a local `.env.example` in the workspace to document required variables.
+- [x] Verify Supabase client initialized correctly in server/client files.
 
 ---
 
@@ -37,14 +34,15 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Prepare the Supabase database instance with pgvector and custom RPC function for similarity search.
 
 ### Tasks
-- [ ] Create `planning/supabase_schema.sql` file.
-- [ ] Write schema statements to:
+- [x] Create GitHub Issue #9 for Phase 2.
+- [x] Create `planning/supabase_schema.sql` file.
+- [x] Write schema statements to:
   - Enable `vector` extension if not exists.
   - Create `articles` table matching the schema fields (`id`, `title`, `slug`, `description`, `category`, `tags`, `author`, `date`, `read_time`, `content`, `embedding`).
   - Set column `embedding` as type `vector(1536)` (OpenAI standard dimensions).
   - Create HNSW index on the `embedding` column for cosine distance optimization.
-- [ ] Write SQL function `match_articles` to perform cosine similarity calculations, apply threshold, handle category filter, and handle tags filter on-database.
-- [ ] Instruct user to execute the script in Supabase SQL editor.
+- [x] Write SQL function `match_articles` to perform cosine similarity calculations, apply threshold, handle category filter, and handle tags filter on-database.
+- [x] Instruct user to execute the script in Supabase SQL editor.
 
 ---
 
@@ -52,11 +50,12 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Run a Node script to generate embeddings for all 100 mock articles and upload them to the Supabase database.
 
 ### Tasks
-- [ ] Create seeding script `scripts/seed-supabase.ts`.
-- [ ] Implement OpenAI embedding generation in the seed script using model `text-embedding-3-small`.
-- [ ] Implement batched upload logic to upsert all 100 articles with vectors to Supabase.
-- [ ] Add `"db:seed": "tsx scripts/seed-supabase.ts"` script to `package.json`.
-- [ ] Run the seed script and verify database population in Supabase table view.
+- [x] Create GitHub Issue #10 for Phase 3.
+- [x] Create seeding script `scripts/seed-supabase.ts`.
+- [x] Implement OpenAI embedding generation in the seed script using model `text-embedding-3-small`.
+- [x] Implement batched upload logic to upsert all 100 articles with vectors to Supabase.
+- [x] Add `"db:seed": "tsx scripts/seed-supabase.ts"` script to `package.json`.
+- [x] Run the seed script and verify database population in Supabase table view.
 
 ---
 
@@ -64,12 +63,13 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Build a secure API Route Handler in Next.js to handle query embedding generation and similarity searches.
 
 ### Tasks
-- [ ] Create Route Handler file `app/api/search/route.ts`.
-- [ ] Handle query params/JSON body parsing: `query`, `category`, `tags`.
-- [ ] Call OpenAI embedding API to convert user search query string into a 1536-dimensional vector.
-- [ ] Perform Supabase RPC query using `match_articles` and passing the vector, category, tags, and similarity parameters.
-- [ ] Configure similarity threshold (e.g., 0.25) to prevent completely unrelated matches.
-- [ ] Implement proper error handling, empty query fallbacks, and response status codes.
+- [x] Create GitHub Issue #11 for Phase 4.
+- [x] Create Route Handler file `app/api/search/route.ts`.
+- [x] Handle query params/JSON body parsing: `query`, `category`, `tags`.
+- [x] Call OpenAI embedding API to convert user search query string into a 1536-dimensional vector.
+- [x] Perform Supabase RPC query using `match_articles` and passing the vector, category, tags, and similarity parameters.
+- [x] Configure similarity threshold (e.g., 0.25) to prevent completely unrelated matches.
+- [x] Implement proper error handling, empty query fallbacks, and response status codes.
 
 ---
 
@@ -77,13 +77,14 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Integrate the semantic search API route into `hooks/useArticleSearch.ts` and coordinate state.
 
 ### Tasks
-- [ ] Extend hook state to include:
+- [x] Create GitHub Issue #12 for Phase 5.
+- [x] Extend hook state to include:
   - `searchMode` (state: `'keyword' | 'semantic'`)
   - `isLoading` (state: `boolean`)
-- [ ] Update category/tag trigger functions to trigger fetch requests when `searchMode` is set to `'semantic'`.
-- [ ] Implement debounced API requests to `/api/search` when typing inside the query bar in semantic mode.
-- [ ] Support empty-query state (if query is empty, query all articles directly without calling embedding APIs).
-- [ ] Integrate error handling and fallback states.
+- [x] Update category/tag trigger functions to trigger fetch requests when `searchMode` is set to `'semantic'`.
+- [x] Implement debounced API requests to `/api/search` when typing inside the query bar in semantic mode.
+- [x] Support empty-query state (if query is empty, query all articles directly without calling embedding APIs).
+- [x] Integrate error handling and fallback states.
 
 ---
 
@@ -91,15 +92,16 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Build premium UI components for search mode toggle, loading feedback, similarity badges, and hybrid highlighting.
 
 ### Tasks
-- [ ] Create search mode toggle inside `components/SearchHero.tsx`:
+- [x] Create GitHub Issue #13 for Phase 6.
+- [x] Create search mode toggle inside `components/SearchHero.tsx`:
   - Visual layout matching our premium visual direction.
   - Slidable background indicator pill with spring animation or clean CSS transitions.
-- [ ] Build loading skeletons:
+- [x] Build loading skeletons:
   - Pulsing gradients showing cards shape while fetching semantic matches.
-- [ ] Modify `components/ResultCard.tsx` to:
+- [x] Modify `components/ResultCard.tsx` to:
   - Accept an optional `similarityScore` prop.
   - Display a badge with percentage match (e.g. `94% Match`) using appropriate premium colored styling (teal/green).
-- [ ] Integrate hybrid highlighting:
+- [x] Integrate hybrid highlighting:
   - Apply exact keyword matching to highlight titles and snippets if query terms exist, otherwise keep text plain.
 
 ---
@@ -108,11 +110,12 @@ This document outlines the detailed execution steps and progress checklists for 
 **Goal:** Execute complete responsiveness, accessibility, and build verification runs.
 
 ### Tasks
-- [ ] Verify keyboard navigation:
+- [x] Create GitHub Issue #14 for Phase 7.
+- [x] Verify keyboard navigation:
   - Press `/` to focus the input bar.
   - Ensure arrow keys up/down navigate results list cleanly in both keyword and semantic search modes.
-- [ ] Verify accessibility compliance:
+- [x] Verify accessibility compliance:
   - Accessible contrast ratios for the toggle switch and the similarity score badge.
   - Keyboard access for the search mode toggle.
-- [ ] Run `npm run build` to verify Next.js builds successfully.
-- [ ] Perform visual audit of the app.
+- [x] Run `npm run build` to verify Next.js builds successfully.
+- [x] Perform visual audit of the app.
